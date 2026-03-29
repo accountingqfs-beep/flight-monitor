@@ -2,456 +2,277 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
 <meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <title>Flight Monitor</title>
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>✈️</text></svg>">
 <style>
-:root{--bg:#06090f;--surface:#0d1320;--card:#111827;--alt:#151d2e;--border:#1e293b;--accent:#3b82f6;--accentDim:#1e3a5f;--success:#10b981;--successBg:#052e16;--warn:#f59e0b;--warnBg:#451a03;--danger:#ef4444;--dangerBg:#450a0a;--text:#e2e8f0;--dim:#64748b;--muted:#334155;--white:#f8fafc}
-*{box-sizing:border-box;margin:0;padding:0}
-body{font-family:-apple-system,'SF Pro Display','Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;-webkit-font-smoothing:antialiased}
+:root{--bg:#06090f;--sf:#0d1320;--cd:#111827;--al:#151d2e;--bd:#1e293b;--ac:#3b82f6;--acd:#1e3a5f;--ok:#10b981;--okb:#052e16;--wn:#f59e0b;--wnb:#451a03;--dg:#ef4444;--dgb:#450a0a;--tx:#e2e8f0;--dm:#64748b;--mt:#334155;--wh:#f8fafc}
+*{box-sizing:border-box;margin:0;padding:0}body{font-family:-apple-system,'SF Pro Display',system-ui,sans-serif;background:var(--bg);color:var(--tx);min-height:100vh;-webkit-font-smoothing:antialiased}
 input,select,button,textarea{font-family:inherit}
-.header{background:var(--surface);border-bottom:1px solid var(--border);padding:12px 16px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;position:sticky;top:0;z-index:100}
-.header-left{display:flex;align-items:center;gap:10px}
-.logo{width:30px;height:30px;border-radius:7px;background:linear-gradient(135deg,var(--accent),#7c3aed);display:flex;align-items:center;justify-content:center;font-size:15px}
-.header h1{font-size:16px;font-weight:700;color:var(--white)}
-.header .sub{font-size:10.5px;color:var(--dim)}
-.nav{display:flex;gap:3px}
-.nav button{padding:7px 14px;border-radius:7px;border:none;font-size:12px;font-weight:600;cursor:pointer;background:transparent;color:var(--dim);transition:all .15s}
-.nav button.active{background:var(--accent);color:var(--white)}
-.main{padding:14px 16px;max-width:880px;margin:0 auto}
-.card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:14px 16px;margin-bottom:12px}
-.pill{display:inline-flex;align-items:center;gap:4px;padding:2px 9px;border-radius:20px;font-size:10.5px;font-weight:600}
-.pill-green{background:var(--successBg);color:var(--success)}
-.pill-yellow{background:var(--warnBg);color:var(--warn)}
-.pill-red{background:var(--dangerBg);color:var(--danger)}
-.pill-blue{background:var(--accentDim);color:var(--accent)}
-.pill-gray{background:var(--alt);color:var(--dim)}
-.metrics{display:flex;gap:5px;flex-wrap:wrap;margin:10px 0}
-.metric{flex:1;min-width:65px;background:var(--alt);border-radius:7px;padding:8px 4px;text-align:center}
-.metric .val{font-size:16px;font-weight:700}
-.metric .lbl{font-size:8.5px;color:var(--dim);margin-top:1px;text-transform:uppercase;font-weight:600;letter-spacing:.05em}
-.form-row{display:flex;gap:10px;margin-bottom:10px;flex-wrap:wrap}
-.form-group{flex:1;min-width:120px}
-.form-group.sm{flex:0.5;min-width:70px}
-.form-group.lg{flex:2;min-width:180px}
-label{display:block;font-size:10px;font-weight:700;color:var(--dim);text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px}
-input,select,textarea{width:100%;padding:8px 10px;border-radius:7px;border:1px solid var(--border);background:var(--alt);color:var(--text);font-size:13px;outline:none}
-input:focus,select:focus{border-color:var(--accent)}
-select{appearance:none}
-textarea{resize:vertical;min-height:60px}
-.btn{padding:7px 15px;border-radius:7px;border:none;font-size:12px;font-weight:600;cursor:pointer;transition:opacity .15s}
-.btn:active{opacity:.8}
-.btn-primary{background:var(--accent);color:var(--white)}
-.btn-ghost{background:var(--alt);color:var(--dim);border:1px solid var(--border)}
-.btn-danger{background:var(--dangerBg);color:var(--danger)}
-.btn-success{background:var(--successBg);color:var(--success)}
-.btn-row{display:flex;gap:6px;margin-top:12px}
-.chart-bar{display:flex;align-items:flex-end;gap:1.5px;height:40px}
-.chart-bar div{flex:1;border-radius:2px 2px 0 0;transition:height .3s;min-width:2px}
-.progress-wrap{position:relative;height:22px;background:var(--alt);border-radius:6px;overflow:hidden;margin-bottom:8px}
-.progress-bar{position:absolute;height:100%;border-radius:6px;transition:width .3s}
-.progress-label{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:var(--white)}
-.day-picker{display:flex;gap:4px}
-.day-btn{flex:1;padding:8px 0;border-radius:7px;border:1px solid var(--border);background:var(--alt);color:var(--dim);font-size:11px;font-weight:600;cursor:pointer;transition:all .15s}
-.day-btn.active{border-color:var(--accent);background:var(--accentDim);color:var(--accent)}
-details summary{font-size:11px;color:var(--dim);cursor:pointer;font-weight:600;padding:4px 0}
-table{width:100%;border-collapse:collapse;font-size:11.5px}
-th{text-align:left;padding:5px 7px;border-bottom:1px solid var(--border);color:var(--dim);font-size:9.5px;font-weight:700;text-transform:uppercase}
-td{padding:6px 7px;border-bottom:1px solid var(--border)}
-tr:nth-child(even){background:var(--alt)}
-.empty{text-align:center;padding:50px 20px;color:var(--dim)}
-.empty .icon{font-size:36px;margin-bottom:10px}
-.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.75);display:flex;align-items:center;justify-content:center;z-index:200;padding:16px}
-.modal{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:18px;max-width:400px;width:100%}
-.impact{background:var(--alt);border-radius:8px;padding:10px 12px;font-size:12px;color:var(--dim);line-height:1.7;margin-top:8px}
-.footer{text-align:center;padding:20px;font-size:10px;color:var(--muted)}
-.trip-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px}
-.trip-route{font-size:16px;font-weight:700;color:var(--white)}
-.trip-detail{font-size:11.5px;color:var(--dim);margin-top:2px}
-.config-block{background:var(--alt);border-radius:8px;padding:12px;font-family:'SF Mono',Menlo,monospace;font-size:11px;color:var(--dim);white-space:pre-wrap;word-break:break-all;max-height:200px;overflow:auto;margin-top:8px}
-@media(max-width:480px){.form-group{min-width:100%}.metrics{gap:4px}.metric{min-width:55px;padding:6px 2px}.metric .val{font-size:14px}}
+.hd{background:var(--sf);border-bottom:1px solid var(--bd);padding:10px 16px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;position:sticky;top:0;z-index:100}
+.hd-l{display:flex;align-items:center;gap:9px}.logo{width:28px;height:28px;border-radius:7px;background:linear-gradient(135deg,var(--ac),#7c3aed);display:flex;align-items:center;justify-content:center;font-size:14px}
+.hd h1{font-size:15px;font-weight:700;color:var(--wh)}.hd .sub{font-size:10px;color:var(--dm)}
+.nv{display:flex;gap:2px}.nv button{padding:6px 12px;border-radius:6px;border:none;font-size:11.5px;font-weight:600;cursor:pointer;background:transparent;color:var(--dm)}.nv button.on{background:var(--ac);color:var(--wh)}
+.mn{padding:12px 14px;max-width:860px;margin:0 auto}
+.c{background:var(--cd);border:1px solid var(--bd);border-radius:10px;padding:12px 14px;margin-bottom:10px}
+.p{display:inline-flex;align-items:center;gap:3px;padding:1px 8px;border-radius:16px;font-size:10px;font-weight:600}
+.pg{background:var(--okb);color:var(--ok)}.py{background:var(--wnb);color:var(--wn)}.pr{background:var(--dgb);color:var(--dg)}.pb{background:var(--acd);color:var(--ac)}.pgr{background:var(--al);color:var(--dm)}
+.ms{display:flex;gap:4px;flex-wrap:wrap;margin:8px 0}.m{flex:1;min-width:58px;background:var(--al);border-radius:6px;padding:7px 3px;text-align:center}
+.m .v{font-size:15px;font-weight:700}.m .l{font-size:8px;color:var(--dm);margin-top:1px;text-transform:uppercase;font-weight:600;letter-spacing:.04em}
+.fr{display:flex;gap:8px;margin-bottom:8px;flex-wrap:wrap}.fg{flex:1;min-width:100px}.fg.s{flex:.5;min-width:65px}.fg.l{flex:2;min-width:160px}
+label{display:block;font-size:9.5px;font-weight:700;color:var(--dm);text-transform:uppercase;letter-spacing:.05em;margin-bottom:3px}
+input,select{width:100%;padding:7px 9px;border-radius:6px;border:1px solid var(--bd);background:var(--al);color:var(--tx);font-size:12.5px;outline:none}
+input:focus,select:focus{border-color:var(--ac)}select{appearance:none}
+.b{padding:6px 13px;border-radius:6px;border:none;font-size:11.5px;font-weight:600;cursor:pointer}.b:active{opacity:.8}
+.bp{background:var(--ac);color:var(--wh)}.bg{background:var(--al);color:var(--dm);border:1px solid var(--bd)}.bd{background:var(--dgb);color:var(--dg)}.bs{background:var(--okb);color:var(--ok)}
+.br{display:flex;gap:5px;margin-top:10px}
+.cb{display:flex;align-items:flex-end;gap:1px;height:36px}.cb div{flex:1;border-radius:2px 2px 0 0;min-width:2px}
+details summary{font-size:10.5px;color:var(--dm);cursor:pointer;font-weight:600;padding:3px 0}
+table{width:100%;border-collapse:collapse;font-size:11px}th{text-align:left;padding:4px 6px;border-bottom:1px solid var(--bd);color:var(--dm);font-size:9px;font-weight:700;text-transform:uppercase}
+td{padding:5px 6px;border-bottom:1px solid var(--bd)}tr:nth-child(even){background:var(--al)}
+.dp{display:flex;gap:3px}.db{flex:1;padding:7px 0;border-radius:6px;border:1px solid var(--bd);background:var(--al);color:var(--dm);font-size:10.5px;font-weight:600;cursor:pointer;text-align:center}
+.db.on{border-color:var(--ac);background:var(--acd);color:var(--ac)}
+.pw{position:relative;height:20px;background:var(--al);border-radius:5px;overflow:hidden;margin-bottom:6px}
+.pb2{position:absolute;height:100%;border-radius:5px;transition:width .3s}.pl{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:var(--wh)}
+.gg{position:relative;height:52px;margin-bottom:2px}
+.gg .trk{position:absolute;top:14px;left:0;right:0;height:12px;background:var(--al);border-radius:6px}
+.gg .prj{position:absolute;top:11px;height:18px;border-radius:5px;background:#3b82f6;opacity:.25}
+.gg .tkd{position:absolute;top:13px;height:14px;border-radius:3px;background:#60a5fa;opacity:.45}
+.imp{background:var(--al);border-radius:6px;padding:8px 10px;font-size:11px;color:var(--dm);line-height:1.6;margin-top:6px}
+.empty{text-align:center;padding:40px 16px;color:var(--dm)}.empty .ic{font-size:32px;margin-bottom:8px}
+.mo{position:fixed;inset:0;background:rgba(0,0,0,.75);display:flex;align-items:center;justify-content:center;z-index:200;padding:12px}
+.mo .mc{background:var(--cd);border:1px solid var(--bd);border-radius:10px;padding:14px;max-width:400px;width:100%}
+.ft{text-align:center;padding:16px;font-size:9px;color:var(--mt)}
+.lgd{display:flex;gap:10px;font-size:9.5px;color:var(--dm);margin-top:5px;flex-wrap:wrap}
+.lgd .sq{display:inline-block;width:11px;height:6px;border-radius:2px;margin-right:2px;vertical-align:middle}
+@media(max-width:480px){.fg{min-width:100%!important}.ms{gap:3px}.m{min-width:48px;padding:5px 2px}.m .v{font-size:13px}}
 </style>
 </head>
 <body>
 <div id="app"></div>
 <script>
-const LS_KEY='flight-monitor-v5';
-const FREE_LIMIT=250;
-const PAID_RATE=0.015;
-const AIRLINES=[{c:'',l:'All Airlines'},{c:'DL',l:'Delta'},{c:'UA',l:'United'},{c:'AA',l:'American'},{c:'WN',l:'Southwest'},{c:'B6',l:'JetBlue'},{c:'AS',l:'Alaska'},{c:'NK',l:'Spirit'},{c:'F9',l:'Frontier'},{c:'HA',l:'Hawaiian'}];
-const STOPS=[{v:'nonstop',l:'Nonstop only'},{v:'1stop',l:'1 stop or fewer'},{v:'any',l:'Any stops'}];
-const CABINS=[{v:'economy',l:'Economy'},{v:'premium',l:'Premium Economy'},{v:'business',l:'Business'},{v:'first',l:'First'}];
-const DAYS=['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
-const HOURS=Array.from({length:24},(_,i)=>({v:i,l:i===0?'12 AM':i<12?i+' AM':i===12?'12 PM':(i-12)+' PM'}));
-const THRESHOLDS=[25,40,50,75,100,150,200,300];
+const LS='fm-v5',FL=250,PR=.015;
+const AL=[{c:'',l:'All'},{c:'DL',l:'Delta'},{c:'UA',l:'United'},{c:'AA',l:'American'},{c:'WN',l:'Southwest'},{c:'B6',l:'JetBlue'},{c:'AS',l:'Alaska'},{c:'NK',l:'Spirit'},{c:'F9',l:'Frontier'},{c:'HA',l:'Hawaiian'}];
+const ST=[{v:'nonstop',l:'Nonstop'},{v:'1stop',l:'1 stop or fewer'},{v:'any',l:'Any'}];
+const CB=[{v:'economy',l:'Economy'},{v:'premium',l:'Premium Econ'},{v:'business',l:'Business'},{v:'first',l:'First'}];
+const DY=['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
+const HR=Array.from({length:24},(_,i)=>({v:i,l:i===0?'12a':i<12?i+'a':i===12?'12p':(i-12)+'p'}));
+const TH=[10,15,20,25,30,35,40,50,60,75,100];
+const DT={id:'',nm:'',or:'',ds:'',od:'',rd:'',px:2,af:'',fn:'',st:'nonstop',tt:'roundtrip',cb:'economy',bp:'',at:100,pt:40,ac:true,ow:false,oa:'',ra:'',pc:[]};
+const DS={sch:{days:['Tue','Fri'],hr:9,tz:'ET'},api:{}};
 
-function load(){try{return JSON.parse(localStorage.getItem(LS_KEY))||{trips:[],settings:{schedule:{days:['Wed','Sat'],hour:9,tz:'ET'},apiUsage:{}}}}catch(e){return{trips:[],settings:{schedule:{days:['Wed','Sat'],hour:9,tz:'ET'},apiUsage:{}}}}}
-function save(data){localStorage.setItem(LS_KEY,JSON.stringify(data))}
-function uid(){return Math.random().toString(36).slice(2,10)}
-function today(){return new Date().toISOString().split('T')[0]}
-function daysOut(d){return Math.ceil((new Date(d)-new Date(today()))/864e5)}
+function ld(){try{return JSON.parse(localStorage.getItem(LS))||{t:[],s:{...DS}}}catch(e){return{t:[],s:{...DS}}}}
+function sv(d){localStorage.setItem(LS,JSON.stringify(d))}
+function uid(){return Math.random().toString(36).slice(2,9)}
+function td(){return new Date().toISOString().split('T')[0]}
+function dout(d){return Math.ceil((new Date(d)-new Date(td()))/864e5)}
 function fmt(n){return n!=null?'$'+Number(n).toFixed(0):'—'}
-function monthKey(){const d=new Date();return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')}
-function daysLeftInMonth(){const d=new Date();return new Date(d.getFullYear(),d.getMonth()+1,0).getDate()-d.getDate()}
-function airlineName(c){return(AIRLINES.find(a=>a.c===c)||{}).l||c||'All'}
-function cabinName(c){return(CABINS.find(x=>x.v===c)||{}).l||'Economy'}
-function stopsName(c){return(STOPS.find(x=>x.v===c)||{}).l||''}
-function h(tag,props,...children){const el=document.createElement(tag);if(props)Object.entries(props).forEach(([k,v])=>{if(k==='onclick'||k==='onchange'||k==='oninput')el[k]=v;else if(k==='className')el.className=v;else if(k==='style'&&typeof v==='object')Object.assign(el.style,v);else if(k==='checked')el.checked=v;else el.setAttribute(k,v)});children.flat(9).forEach(c=>{if(c==null)return;el.appendChild(typeof c==='string'?document.createTextNode(c):c)});return el}
+function aln(c){return(AL.find(a=>a.c===c)||{}).l||c||'All'}
+function cbn(c){return(CB.find(x=>x.v===c)||{}).l||'Economy'}
+function stn(c){return(ST.find(x=>x.v===c)||{}).l||''}
+function mk(){const d=new Date();return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')}
+function dlm(){const d=new Date();return new Date(d.getFullYear(),d.getMonth()+1,0).getDate()-d.getDate()}
+function h(t,p,...c){const e=document.createElement(t);if(p)Object.entries(p).forEach(([k,v])=>{if(k.startsWith('on'))e[k]=v;else if(k==='cn')e.className=v;else if(k==='st'&&typeof v==='object')Object.assign(e.style,v);else if(k==='checked')e.checked=v;else if(k==='selected')e.selected=v;else e.setAttribute(k,v)});c.flat(9).forEach(x=>{if(x!=null)e.appendChild(typeof x==='string'?document.createTextNode(x):x)});return e}
 
-let state=load();
-let view='dashboard';
-let editId=null;
-let checkId=null;
+let S=ld(),vw='dash',eid=null,cid=null;
 
-function render(){
-  const app=document.getElementById('app');
-  app.innerHTML='';
-  app.appendChild(renderHeader());
-  const main=h('div',{className:'main'});
-  if(view==='dashboard')main.appendChild(renderDashboard());
-  else if(view==='add')main.appendChild(renderTripForm(null));
-  else if(view==='edit'&&editId)main.appendChild(renderTripForm(state.trips.find(t=>t.id===editId)));
-  else if(view==='settings')main.appendChild(renderSettings());
-  app.appendChild(main);
-  app.appendChild(h('div',{className:'footer'},'Data saved in browser · Backend: GitHub Actions + SerpApi + Discord'));
-  if(checkId)app.appendChild(renderCheckModal(state.trips.find(t=>t.id===checkId)));
-}
+function R(){const a=document.getElementById('app');a.innerHTML='';a.appendChild(rHd());const m=h('div',{cn:'mn'});
+if(vw==='dash')m.appendChild(rDash());else if(vw==='add')m.appendChild(rForm(null));else if(vw==='edit'&&eid)m.appendChild(rForm(S.t.find(t=>t.id===eid)));else if(vw==='set')m.appendChild(rSet());
+a.appendChild(m);a.appendChild(h('div',{cn:'ft'},'Saved in browser · GitHub Actions + SerpApi + Discord'));if(cid)a.appendChild(rChkMo(S.t.find(t=>t.id===cid)))}
 
-function renderHeader(){
-  const active=state.trips.filter(t=>t.active&&daysOut(t.outboundDate)>=0);
-  const used=state.settings.apiUsage?.[monthKey()]||0;
-  return h('div',{className:'header'},
-    h('div',{className:'header-left'},
-      h('div',{className:'logo'},'✈'),
-      h('div',null,h('h1',null,'Flight Monitor'),h('div',{className:'sub'},active.length+' active · '+used+'/'+FREE_LIMIT+' API calls'))
-    ),
-    h('div',{className:'nav'},
-      ...[['dashboard','Trips'],['add','+ Add'],['settings','Settings']].map(([v,l])=>
-        h('button',{className:view===v||(view==='edit'&&v==='dashboard')?'active':'',onclick:()=>{view=v;editId=null;render()}},l)
-      )
-    )
-  );
-}
+function rHd(){const at=S.t.filter(t=>t.ac&&dout(t.od)>=0),u=S.s.api?.[mk()]||0;
+return h('div',{cn:'hd'},h('div',{cn:'hd-l'},h('div',{cn:'logo'},'✈'),h('div',null,h('h1',null,'Flight Monitor'),h('div',{cn:'sub'},at.length+' active · '+u+'/'+FL+' API'))),
+h('div',{cn:'nv'},...[['dash','Trips'],['add','+ Add'],['set','Settings']].map(([v,l])=>h('button',{cn:vw===v||(vw==='edit'&&v==='dash')?'on':'',onclick:()=>{vw=v;eid=null;R()}},l))))}
 
-function renderDashboard(){
-  const wrap=h('div');
-  wrap.appendChild(renderUsagePanel());
-  const active=state.trips.filter(t=>daysOut(t.outboundDate)>=0).sort((a,b)=>a.outboundDate.localeCompare(b.outboundDate));
-  const past=state.trips.filter(t=>daysOut(t.outboundDate)<0);
-  if(!active.length&&!past.length){
-    wrap.appendChild(h('div',{className:'empty'},h('div',{className:'icon'},'✈️'),h('div',{style:{fontSize:'15px',fontWeight:600,color:'var(--white)',marginBottom:'6px'}},'No trips yet'),h('button',{className:'btn btn-primary',onclick:()=>{view='add';render()}},'+ Add Trip')));
-  }else{
-    active.forEach(t=>wrap.appendChild(renderTripCard(t)));
-    if(past.length){
-      const det=h('details',{style:{marginTop:'14px'}},h('summary',null,'Past trips ('+past.length+')'));
-      const dv=h('div',{style:{marginTop:'8px'}});
-      past.forEach(t=>dv.appendChild(renderTripCard(t)));
-      det.appendChild(dv);
-      wrap.appendChild(det);
-    }
-  }
-  return wrap;
-}
+function rGauge(trip){const ck=trip.pc||[];if(!ck.length)return h('div');
+const ps=ck.map(c=>c.rtp).filter(Boolean);const cur=ps.length?ps[ps.length-1]:null;if(!cur)return h('div');
+const lo=Math.min(...ps),hi=Math.max(...ps);const last=ck[ck.length-1];
+const plo=last?.tr?.[0]||null,phi=last?.tr?.[1]||null;
+const floor=Math.min(plo||Infinity,lo);if(!isFinite(floor))return h('div');
+const tgt=Math.round(floor*(1+(trip.pt||40)/100));const red=cur>tgt;
+const sMin=Math.floor(Math.min(floor,lo,cur)*.85/50)*50,sMax=Math.ceil(Math.max(phi||0,hi,cur,tgt)*1.1/50)*50;
+const rng=sMax-sMin||1;const pc=v=>((v-sMin)/rng*100);
+const ticks=[];const step=rng<=400?100:rng<=800?200:rng<=1500?300:500;
+for(let v=Math.ceil(sMin/step)*step;v<=sMax;v+=step)ticks.push(v);
 
-function renderUsagePanel(){
-  const s=state.settings.schedule||{days:['Wed','Sat'],hour:9,tz:'ET'};
-  const used=state.settings.apiUsage?.[monthKey()]||0;
-  const active=state.trips.filter(t=>t.active&&daysOut(t.outboundDate)>=0).length;
-  const checksWk=s.days.length;
-  const projected=Math.ceil(active*checksWk*(daysLeftInMonth()/7));
-  const total=used+projected;
-  const overage=Math.max(0,total-FREE_LIMIT);
-  const cost=overage*PAID_RATE;
-  const withinFree=total<=FREE_LIMIT;
-  const pct=Math.min(used/FREE_LIMIT*100,100);
-  const card=h('div',{className:'card'});
-  card.appendChild(h('div',{style:{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:'10px'}},
-    h('div',{style:{fontSize:'13px',fontWeight:700,color:'var(--white)'}},'API Usage — '+new Date().toLocaleString('default',{month:'long',year:'numeric'})),
-    h('span',{className:'pill '+(withinFree?'pill-green':'pill-red')},withinFree?'Free Tier':'$'+cost.toFixed(2)+' overage')
-  ));
-  const pw=h('div',{className:'progress-wrap'});
-  pw.appendChild(h('div',{className:'progress-bar',style:{width:Math.min((used+projected)/FREE_LIMIT*100,100)+'%',background:withinFree?'var(--accent)':'var(--warn)',opacity:'.25'}}));
-  pw.appendChild(h('div',{className:'progress-bar',style:{width:pct+'%',background:withinFree?'var(--success)':'var(--danger)'}}));
-  pw.appendChild(h('div',{className:'progress-label'},used+' / '+FREE_LIMIT+' used'));
-  card.appendChild(pw);
-  const ms=h('div',{className:'metrics'});
-  [{l:'Used',v:''+used,c:pct>80?'var(--warn)':'var(--success)'},{l:'Free Left',v:''+(FREE_LIMIT-used),c:FREE_LIMIT-used<30?'var(--danger)':'var(--success)'},{l:'Projected',v:'+'+projected,c:withinFree?'var(--accent)':'var(--warn)'},{l:'Trips',v:''+active,c:'var(--accent)'},{l:'Checks/Wk',v:''+checksWk,c:'var(--accent)'},{l:'Est. Cost',v:withinFree?'$0':'$'+cost.toFixed(2),c:withinFree?'var(--success)':'var(--danger)'}].forEach(m=>{
-    ms.appendChild(h('div',{className:'metric'},h('div',{className:'val',style:{color:m.c}},m.v),h('div',{className:'lbl'},m.l)));
-  });
-  card.appendChild(ms);
-  return card;
-}
+const w=h('div',{st:{marginBottom:'6px'}});
+w.appendChild(h('div',{st:{display:'flex',justifyContent:'space-between',fontSize:'9.5px',color:'var(--dm)',marginBottom:'2px'}},...ticks.map(v=>h('span',null,'$'+v))));
+const gg=h('div',{cn:'gg'});
+gg.appendChild(h('div',{cn:'trk'}));
+if(plo&&phi)gg.appendChild(h('div',{cn:'prj',st:{left:pc(plo)+'%',width:(pc(phi)-pc(plo))+'%'}}));
+if(ps.length>1)gg.appendChild(h('div',{cn:'tkd',st:{left:pc(lo)+'%',width:Math.max(pc(hi)-pc(lo),1.5)+'%'}}));
+else gg.appendChild(h('div',{cn:'tkd',st:{left:pc(lo)+'%',width:'1.5%'}}));
+// Current ▼
+const ca=h('div',{st:{position:'absolute',top:'0',left:pc(cur)+'%',transform:'translateX(-50%)'}});
+ca.appendChild(h('div',{st:{width:0,height:0,borderLeft:'7px solid transparent',borderRight:'7px solid transparent',borderTop:'9px solid '+(red?'var(--dg)':'var(--ok)')}}));
+ca.appendChild(h('div',{st:{position:'absolute',top:'-15px',left:'50%',transform:'translateX(-50%)',fontSize:'11px',fontWeight:'500',color:red?'var(--dg)':'var(--ok)',whiteSpace:'nowrap'}},fmt(cur)));
+gg.appendChild(ca);
+// Target ▲
+const ta=h('div',{st:{position:'absolute',top:'30px',left:pc(tgt)+'%',transform:'translateX(-50%)'}});
+ta.appendChild(h('div',{st:{width:0,height:0,borderLeft:'6px solid transparent',borderRight:'6px solid transparent',borderBottom:'8px solid var(--wn)'}}));
+ta.appendChild(h('div',{st:{position:'absolute',top:'10px',left:'50%',transform:'translateX(-50%)',fontSize:'9px',fontWeight:'500',color:'var(--wn)',whiteSpace:'nowrap'}},fmt(tgt)+' tgt'));
+gg.appendChild(ta);
+w.appendChild(gg);
+const lg=h('div',{cn:'lgd'});
+if(plo&&phi)lg.appendChild(h('span',null,h('i',{cn:'sq',st:{background:'rgba(59,130,246,.3)'}}),` Proj ${fmt(plo)}–${fmt(phi)}`));
+lg.appendChild(h('span',null,h('i',{cn:'sq',st:{background:'rgba(96,165,250,.5)'}}),` Tracked ${fmt(lo)}${hi!==lo?'–'+fmt(hi):''}`));
+lg.appendChild(h('span',null,h('span',{st:{display:'inline-block',width:0,height:0,borderLeft:'4px solid transparent',borderRight:'4px solid transparent',borderTop:'5px solid '+(red?'var(--dg)':'var(--ok)'),marginRight:'3px',verticalAlign:'middle'}}),` Cur`));
+lg.appendChild(h('span',null,h('span',{st:{display:'inline-block',width:0,height:0,borderLeft:'4px solid transparent',borderRight:'4px solid transparent',borderBottom:'5px solid var(--wn)',marginRight:'3px',verticalAlign:'middle'}}),` Tgt (${trip.pt||40}%)`));
+w.appendChild(lg);return w}
 
-function renderTripCard(trip){
-  const checks=trip.priceChecks||[];
-  const latest=checks.length?checks[checks.length-1]:null;
-  const prices=checks.map(c=>c.price).filter(Boolean);
-  const lowest=prices.length?Math.min(...prices):null;
-  const highest=prices.length?Math.max(...prices):null;
-  const avg=prices.length?prices.reduce((s,p)=>s+p,0)/prices.length:null;
-  const d=daysOut(trip.outboundDate);
-  const drop=trip.bookedPrice&&latest?trip.bookedPrice-latest.price:null;
-  const trend=prices.length>=2?(prices[prices.length-1]<prices[prices.length-2]?'down':prices[prices.length-1]>prices[prices.length-2]?'up':'flat'):null;
-  const range=(highest||1)-(lowest||0)||1;
+function rCard(trip){const ck=trip.pc||[],lat=ck.length?ck[ck.length-1]:null;
+const rtp=ck.map(c=>c.rtp).filter(Boolean);const lo=rtp.length?Math.min(...rtp):null,hi=rtp.length?Math.max(...rtp):null;
+const avg=rtp.length?rtp.reduce((s,p)=>s+p,0)/rtp.length:null;const d=dout(trip.od);
+const drop=trip.bp&&lat?.rtp?trip.bp-lat.rtp:null;
+const trend=rtp.length>=2?(rtp[rtp.length-1]<rtp[rtp.length-2]?'dn':rtp[rtp.length-1]>rtp[rtp.length-2]?'up':'flat'):null;
+const stC=d<0?'pr':d<=14?'py':'pg';const cd=h('div',{cn:'c'});
 
-  const card=h('div',{className:'card'});
-  // Header
-  const hdr=h('div',{className:'trip-header'});
-  const left=h('div');
-  const row1=h('div',{style:{display:'flex',alignItems:'center',gap:'7px',marginBottom:'3px'}});
-  row1.appendChild(h('span',{className:'trip-route'},trip.origin+' → '+trip.destination));
-  row1.appendChild(h('span',{className:'pill '+(d<0?'pill-red':d<=14?'pill-yellow':'pill-green')},d<0?'Past':d+'d'));
-  if(drop>0&&drop>=trip.alertThreshold)row1.appendChild(h('span',{className:'pill pill-green'},'↓ '+fmt(drop)));
-  if(trip.tripType==='oneway')row1.appendChild(h('span',{className:'pill pill-gray'},'One way'));
-  left.appendChild(row1);
-  left.appendChild(h('div',{className:'trip-detail'},[trip.name,trip.outboundDate+(trip.returnDate?' → '+trip.returnDate:''),trip.passengers+'pax',airlineName(trip.airlineFilter),cabinName(trip.cabin),stopsName(trip.stops),trip.flightNumbers].filter(Boolean).join(' · ')));
-  hdr.appendChild(left);
-  const btns=h('div',{style:{display:'flex',gap:'4px',flexShrink:0}});
-  btns.appendChild(h('button',{className:'btn btn-ghost',onclick:()=>{view='edit';editId=trip.id;render()}},'Edit'));
-  btns.appendChild(h('button',{className:'btn btn-primary',style:{background:'var(--accentDim)',color:'var(--accent)'},onclick:()=>{checkId=trip.id;render()}},'+ Check'));
-  hdr.appendChild(btns);
-  card.appendChild(hdr);
+const hd=h('div',{st:{display:'flex',justifyContent:'space-between',alignItems:'flex-start',marginBottom:'6px'}});
+const lt=h('div');const r1=h('div',{st:{display:'flex',alignItems:'center',gap:'5px',marginBottom:'2px'}});
+r1.appendChild(h('span',{st:{fontSize:'15px',fontWeight:700,color:'var(--wh)'}},trip.or+' → '+trip.ds));
+r1.appendChild(h('span',{cn:'p '+stC},d<0?'Past':d+'d'));
+if(drop>0&&drop>=trip.at)r1.appendChild(h('span',{cn:'p pg'},'↓'+fmt(drop)));
+if(trip.tt==='oneway')r1.appendChild(h('span',{cn:'p pgr'},'OW'));
+lt.appendChild(r1);
+lt.appendChild(h('div',{st:{fontSize:'10px',color:'var(--dm)'}},[trip.nm,trip.od+(trip.rd?' → '+trip.rd:''),trip.px+'pax',aln(trip.af),cbn(trip.cb),stn(trip.st)].filter(Boolean).join(' · ')));
+hd.appendChild(lt);
+const bs=h('div',{st:{display:'flex',gap:'3px',flexShrink:0}});
+bs.appendChild(h('button',{cn:'b bg',onclick:()=>{vw='edit';eid=trip.id;R()}},'Edit'));
+bs.appendChild(h('button',{cn:'b bp',st:{background:'var(--acd)',color:'var(--ac)'},onclick:()=>{cid=trip.id;R()}},'+ Chk'));
+hd.appendChild(bs);cd.appendChild(hd);
 
-  // Metrics
-  const ms=h('div',{className:'metrics'});
-  [{l:'Latest',v:latest?fmt(latest.price):'—',c:'var(--accent)'},{l:'Lowest',v:lowest!=null?fmt(lowest):'—',c:'var(--success)'},{l:'Avg',v:avg!=null?fmt(avg):'—',c:'var(--warn)'},{l:'Booked',v:trip.bookedPrice?fmt(trip.bookedPrice):'—',c:'var(--white)'},{l:'vs Booked',v:drop!=null?(drop>0?'−':'+')+('$'+Math.abs(drop).toFixed(0)):'—',c:drop>0?'var(--success)':drop<0?'var(--danger)':'var(--dim)'},{l:'Trend',v:trend==='down'?'📉':trend==='up'?'📈':trend==='flat'?'➡️':'—',c:'var(--text)'}].forEach(m=>{
-    ms.appendChild(h('div',{className:'metric'},h('div',{className:'val',style:{color:m.c}},m.v),h('div',{className:'lbl'},m.l)));
-  });
-  card.appendChild(ms);
+cd.appendChild(rGauge(trip));
 
-  // Chart
-  if(checks.length>1){
-    const chart=h('div',{className:'chart-bar'});
-    checks.forEach(c=>{
-      const ht=((c.price-(lowest||0))/range)*30+10;
-      const col=trip.bookedPrice?(c.price<trip.bookedPrice?'var(--success)':c.price>trip.bookedPrice?'var(--danger)':'var(--accent)'):'var(--accent)';
-      chart.appendChild(h('div',{style:{height:Math.max(ht,3)+'px',background:col,opacity:c.source==='auto'?1:.65},title:c.date+': '+fmt(c.price)}));
-    });
-    card.appendChild(chart);
-  }
+const ms=h('div',{cn:'ms'});
+[{l:'RT Low',v:lat?.rtp?fmt(lat.rtp):'—',c:lat?.rtp?'var(--ac)':'var(--dm)'},
+{l:'RT Short',v:lat?.rsp?fmt(lat.rsp)+(lat?.rsd?' ('+Math.floor(lat.rsd/60)+'h'+lat.rsd%60+'m)':''):'—',c:lat?.rsp?'var(--ac)':'var(--dm)'},
+...(trip.ow?[{l:'OW Combo',v:lat?.owt?fmt(lat.owt):'—',c:lat?.owt?'var(--ok)':'var(--dm)'}]:[]),
+{l:'Booked',v:trip.bp?fmt(trip.bp):'—',c:trip.bp?'var(--wh)':'var(--dm)'},
+{l:'vs Book',v:drop!=null?(drop>0?'−':'+')+('$'+Math.abs(drop).toFixed(0)):'—',c:drop>0?'var(--ok)':drop<0?'var(--dg)':'var(--dm)'},
+{l:'Trend',v:trend==='dn'?'📉':trend==='up'?'📈':trend==='flat'?'➡️':'—',c:'var(--tx)'}
+].forEach(m=>ms.appendChild(h('div',{cn:'m'},h('div',{cn:'v',st:{color:m.c}},m.v),h('div',{cn:'l'},m.l))));
+cd.appendChild(ms);
 
-  // History table
-  if(checks.length){
-    const det=h('details',null,h('summary',null,'History ('+checks.length+')'));
-    const tbl=h('table');
-    tbl.appendChild(h('thead',null,h('tr',null,...['Date','Price','Δ Booked','Δ Prev','Source',''].map(x=>h('th',null,x)))));
-    const tbody=h('tbody');
-    [...checks].reverse().forEach((c,i)=>{
-      const idx=checks.length-1-i;
-      const prev=idx>0?checks[idx-1].price:null;
-      const db=trip.bookedPrice?trip.bookedPrice-c.price:null;
-      const dp=prev!=null?prev-c.price:null;
-      const tr=h('tr',null,
-        h('td',null,c.date),
-        h('td',{style:{fontWeight:600}},fmt(c.price)),
-        h('td',{style:{color:db>0?'var(--success)':db<0?'var(--danger)':'var(--dim)'}},db!=null?(db>0?'−':'+')+('$'+Math.abs(db).toFixed(0)):'—'),
-        h('td',{style:{color:dp>0?'var(--success)':dp<0?'var(--danger)':'var(--dim)'}},dp!=null?(dp>0?'↓':'↑')+('$'+Math.abs(dp).toFixed(0)):'—'),
-        h('td',null,h('span',{className:'pill '+(c.source==='auto'?'pill-blue':'pill-gray')},c.source==='auto'?'API':'Manual')),
-        h('td',null,h('button',{className:'btn btn-danger',style:{padding:'2px 6px',fontSize:'10px'},onclick:()=>{trip.priceChecks.splice(idx,1);save(state);render()}},'✕'))
-      );
-      tbody.appendChild(tr);
-    });
-    tbl.appendChild(tbody);
-    det.appendChild(h('div',{style:{overflowX:'auto',marginTop:'6px'}},tbl));
-    card.appendChild(det);
-  }
-  return card;
-}
+if(trip.ow&&lat?.owop){const owd=h('div',{st:{background:'var(--al)',borderRadius:'6px',padding:'7px 9px',fontSize:'10.5px',marginBottom:'6px'}});
+owd.appendChild(h('div',{st:{fontWeight:600,color:'var(--dm)',marginBottom:'3px',fontSize:'9px',textTransform:'uppercase'}},'Two one-ways'));
+const r=h('div',{st:{display:'flex',gap:'10px',color:'var(--tx)',flexWrap:'wrap'}});
+r.appendChild(h('span',null,'Out: '+fmt(lat.owop)+' ('+(lat.owoa||'?')+')'));
+r.appendChild(h('span',null,'Ret: '+fmt(lat.owrp)+' ('+(lat.owra||'?')+')'));
+r.appendChild(h('span',{st:{fontWeight:600}},'= '+fmt(lat.owt)));
+if(lat.rtp){const df=lat.rtp-lat.owt;if(df>0)r.appendChild(h('span',{st:{color:'var(--ok)'}},'saves $'+df));else if(df<0)r.appendChild(h('span',{st:{color:'var(--dm)'}},'RT saves $'+Math.abs(df)))}
+owd.appendChild(r);cd.appendChild(owd)}
 
-function renderTripForm(trip){
-  const isNew=!trip;
-  const f=trip?{...trip}:{id:uid(),name:'',origin:'',destination:'',outboundDate:'',returnDate:'',passengers:2,airlineFilter:'',flightNumbers:'',stops:'nonstop',tripType:'roundtrip',cabin:'economy',bookedPrice:'',alertThreshold:100,active:true,notes:'',priceChecks:[]};
-  const card=h('div',{className:'card'});
-  card.appendChild(h('div',{style:{fontSize:'14px',fontWeight:700,marginBottom:'12px',color:'var(--white)'}},isNew?'Add New Trip':'Edit Trip'));
+if(ck.length>1){const rng=(hi||1)-(lo||0)||1;const cb2=h('div',{cn:'cb'});
+ck.forEach(c=>{const ht=((c.rtp-(lo||0))/rng)*28+8;const cl=trip.bp?(c.rtp<trip.bp?'var(--ok)':c.rtp>trip.bp?'var(--dg)':'var(--ac)'):'var(--ac)';
+cb2.appendChild(h('div',{st:{height:Math.max(ht,3)+'px',background:cl,opacity:c.src==='auto'?'1':'.55'},title:c.dt+': '+fmt(c.rtp)}))});cd.appendChild(cb2)}
 
-  function field(label,type,key,opts={}){
-    const g=h('div',{className:'form-group'+(opts.size==='sm'?' sm':opts.size==='lg'?' lg':'')});
-    g.appendChild(h('label',null,label));
-    if(type==='select'){
-      const s=h('select',{onchange:e=>{f[key]=opts.parse?opts.parse(e.target.value):e.target.value}});
-      (opts.options||[]).forEach(o=>{const op=h('option',{value:o.v},o.l);if(f[key]===o.v||f[key]===o.v)op.selected=true;s.appendChild(op)});
-      g.appendChild(s);
-    }else{
-      const inp=h('input',{type:type||'text',value:f[key]!=null?f[key]:'',placeholder:opts.ph||'',oninput:e=>{f[key]=opts.parse?opts.parse(e.target.value):e.target.value}});
-      if(opts.max)inp.setAttribute('maxlength',opts.max);
-      g.appendChild(inp);
-    }
-    return g;
-  }
+if(ck.length){const det=h('details',null,h('summary',null,'History ('+ck.length+')'));
+const tbl=h('table');tbl.appendChild(h('thead',null,h('tr',null,...['Date','RT Low','RT Short','OW','Src',''].map(x=>h('th',null,x)))));
+const tb=h('tbody');[...ck].reverse().forEach((c,i)=>{const idx=ck.length-1-i;
+tb.appendChild(h('tr',null,h('td',null,c.dt),h('td',{st:{fontWeight:600}},fmt(c.rtp)),h('td',null,c.rsp?fmt(c.rsp):'—'),h('td',null,c.owt?fmt(c.owt):'—'),
+h('td',null,h('span',{cn:'p '+(c.src==='auto'?'pb':'pgr')},c.src==='auto'?'API':'Man')),
+h('td',null,h('button',{cn:'b bd',st:{padding:'1px 4px',fontSize:'9px'},onclick:()=>{trip.pc.splice(idx,1);sv(S);R()}},'✕'))))});
+tbl.appendChild(tb);det.appendChild(h('div',{st:{overflowX:'auto',marginTop:'4px'}},tbl));cd.appendChild(det)}
+return cd}
 
-  card.appendChild(h('div',{className:'form-row'},
-    field('Trip Name','text','name',{size:'lg',ph:'Maui November'}),
-    field('Passengers','number','passengers',{size:'sm',parse:v=>parseInt(v)||1})
-  ));
-  card.appendChild(h('div',{className:'form-row'},
-    field('Origin','text','origin',{ph:'CVG',max:3,parse:v=>v.toUpperCase()}),
-    field('Destination','text','destination',{ph:'OGG',max:3,parse:v=>v.toUpperCase()}),
-    field('Airline','select','airlineFilter',{options:AIRLINES.map(a=>({v:a.c,l:a.l}))}),
-    field('Flight #s','text','flightNumbers',{ph:'DL 5014 / DL 4987'})
-  ));
-  card.appendChild(h('div',{className:'form-row'},
-    field('Trip Type','select','tripType',{options:TRIP_TYPES=[{v:'roundtrip',l:'Round trip'},{v:'oneway',l:'One way'}]}),
-    field('Cabin','select','cabin',{options:CABINS.map(c=>({v:c.v,l:c.l}))}),
-    field('Stops','select','stops',{options:STOPS.map(s=>({v:s.v,l:s.l}))})
-  ));
-  card.appendChild(h('div',{className:'form-row'},
-    field('Outbound Date','date','outboundDate'),
-    field('Return Date','date','returnDate'),
-    field('Booked Price ($)','number','bookedPrice',{ph:'498',parse:v=>v?parseFloat(v):''}),
-    field('Alert Threshold','select','alertThreshold',{options:THRESHOLDS.map(t=>({v:t,l:'≥ $'+t})),parse:v=>parseInt(v)})
-  ));
-  card.appendChild(h('div',{className:'form-row'},field('Notes','text','notes',{size:'lg',ph:'Optional notes'})));
+function rUsage(){const sc=S.s.sch||DS.sch,u=S.s.api?.[mk()]||0;const at=S.t.filter(t=>t.ac&&dout(t.od)>=0);
+const cp=at.reduce((s,t)=>s+(t.ow?3:1),0);const proj=Math.ceil(cp*sc.days.length*(dlm()/7));
+const tot=u+proj,ov=Math.max(0,tot-FL),cost=ov*PR,ok=tot<=FL;const pct=Math.min(u/FL*100,100);
+const cd=h('div',{cn:'c'});cd.appendChild(h('div',{st:{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:'6px'}},
+h('div',{st:{fontSize:'11px',fontWeight:700,color:'var(--wh)'}},'API — '+new Date().toLocaleString('default',{month:'short',year:'numeric'})),
+h('span',{cn:'p '+(ok?'pg':'pr')},ok?'Free':'$'+cost.toFixed(2))));
+const pw=h('div',{cn:'pw'});pw.appendChild(h('div',{cn:'pb2',st:{width:Math.min((u+proj)/FL*100,100)+'%',background:ok?'var(--ac)':'var(--wn)',opacity:'.2'}}));
+pw.appendChild(h('div',{cn:'pb2',st:{width:pct+'%',background:ok?'var(--ok)':'var(--dg)'}}));
+pw.appendChild(h('div',{cn:'pl'},u+'/'+FL));cd.appendChild(pw);
+const ms=h('div',{cn:'ms'});
+[{l:'Used',v:''+u,c:pct>80?'var(--wn)':'var(--ok)'},{l:'Left',v:''+(FL-u),c:FL-u<30?'var(--dg)':'var(--ok)'},{l:'Proj',v:'+'+proj,c:ok?'var(--ac)':'var(--wn)'},{l:'Trips',v:''+at.length,c:'var(--ac)'},{l:'/Check',v:''+cp,c:'var(--ac)'},{l:'Cost',v:ok?'$0':'$'+cost.toFixed(2),c:ok?'var(--ok)':'var(--dg)'}
+].forEach(m=>ms.appendChild(h('div',{cn:'m'},h('div',{cn:'v',st:{color:m.c}},m.v),h('div',{cn:'l'},m.l))));
+cd.appendChild(ms);return cd}
 
-  const btns=h('div',{className:'btn-row'});
-  btns.appendChild(h('button',{className:'btn btn-primary',onclick:()=>{
-    if(!f.origin||!f.destination||!f.outboundDate){alert('Origin, destination, and outbound date are required.');return}
-    if(isNew)state.trips.push(f);else{const idx=state.trips.findIndex(t=>t.id===f.id);if(idx>=0)state.trips[idx]=f;}
-    save(state);view='dashboard';editId=null;render();
-  }},isNew?'Add Trip':'Save'));
-  btns.appendChild(h('button',{className:'btn btn-ghost',onclick:()=>{view='dashboard';editId=null;render()}},'Cancel'));
-  if(!isNew){
-    const del=h('button',{className:'btn btn-danger',style:{marginLeft:'auto'},onclick:()=>{
-      if(confirm('Delete this trip and all price history?')){state.trips=state.trips.filter(t=>t.id!==f.id);save(state);view='dashboard';editId=null;render();}
-    }},'Delete');
-    btns.appendChild(del);
-  }
-  card.appendChild(btns);
+function rDash(){const w=h('div');w.appendChild(rUsage());
+const ac=S.t.filter(t=>dout(t.od)>=0).sort((a,b)=>a.od.localeCompare(b.od));
+const ps=S.t.filter(t=>dout(t.od)<0);
+if(!ac.length&&!ps.length){w.appendChild(h('div',{cn:'empty'},h('div',{cn:'ic'},'✈️'),h('div',{st:{fontSize:'14px',fontWeight:600,color:'var(--wh)',marginBottom:'5px'}},'No trips'),h('button',{cn:'b bp',onclick:()=>{vw='add';R()}},'+ Add Trip')))}
+else{ac.forEach(t=>w.appendChild(rCard(t)));if(ps.length){const det=h('details',{st:{marginTop:'8px'}},h('summary',null,'Past ('+ps.length+')'));const dv=h('div',{st:{marginTop:'6px'}});ps.forEach(t=>dv.appendChild(rCard(t)));det.appendChild(dv);w.appendChild(det)}}
+return w}
 
-  // Python config output
-  if(!isNew){
-    card.appendChild(h('div',{style:{marginTop:'16px'}},
-      h('details',null,
-        h('summary',null,'Python config for this trip (copy to flight_monitor_v2.py)'),
-        h('div',{className:'config-block'},JSON.stringify({
-          id:f.id,name:f.name,origin:f.origin,destination:f.destination,
-          outbound_date:f.outboundDate,return_date:f.returnDate,
-          passengers:f.passengers,airline_filter:f.airlineFilter,
-          flight_numbers:f.flightNumbers,booked_price:f.bookedPrice||null,
-          alert_threshold:f.alertThreshold,active:f.active
-        },null,2))
-      )
-    ));
-  }
-  return card;
-}
+function rForm(trip){const nw=!trip;const f=trip?{...trip}:{...DT,id:uid()};const cd=h('div',{cn:'c'});
+cd.appendChild(h('div',{st:{fontSize:'13px',fontWeight:700,marginBottom:'8px',color:'var(--wh)'}},nw?'Add trip':'Edit trip'));
+function fi(l,t,k,o={}){const g=h('div',{cn:'fg'+(o.sz==='s'?' s':o.sz==='l'?' l':'')});g.appendChild(h('label',null,l));
+if(t==='select'){const s=h('select',{onchange:e=>{f[k]=o.ps?o.ps(e.target.value):e.target.value}});(o.op||[]).forEach(op=>{const o2=h('option',{value:op.v},op.l);if(String(f[k])===String(op.v))o2.selected=true;s.appendChild(o2)});g.appendChild(s)}
+else{const inp=h('input',{type:t||'text',value:f[k]!=null?f[k]:'',placeholder:o.ph||'',oninput:e=>{f[k]=o.ps?o.ps(e.target.value):e.target.value}});if(o.mx)inp.maxLength=o.mx;g.appendChild(inp)}return g}
 
-function renderCheckModal(trip){
-  if(!trip)return h('div');
-  const overlay=h('div',{className:'modal-overlay',onclick:e=>{if(e.target===overlay){checkId=null;render()}}});
-  const modal=h('div',{className:'modal'});
-  modal.appendChild(h('div',{style:{fontSize:'14px',fontWeight:700,color:'var(--white)',marginBottom:'3px'}},'Log Price Check'));
-  modal.appendChild(h('div',{style:{fontSize:'12px',color:'var(--dim)',marginBottom:'12px'}},trip.origin+' → '+trip.destination));
-  let d=today(),p='',n='';
-  modal.appendChild(h('div',{className:'form-row'},
-    (()=>{const g=h('div',{className:'form-group'});g.appendChild(h('label',null,'Date'));g.appendChild(h('input',{type:'date',value:d,oninput:e=>{d=e.target.value}}));return g})(),
-    (()=>{const g=h('div',{className:'form-group'});g.appendChild(h('label',null,'Price ($)'));const i=h('input',{type:'number',step:'0.01',placeholder:'348',oninput:e=>{p=e.target.value}});setTimeout(()=>i.focus(),100);g.appendChild(i);return g})()
-  ));
-  const ng=h('div',{style:{marginBottom:'12px'}});ng.appendChild(h('label',null,'Notes'));ng.appendChild(h('input',{placeholder:'Optional',oninput:e=>{n=e.target.value}}));modal.appendChild(ng);
-  modal.appendChild(h('div',{className:'btn-row'},
-    h('button',{className:'btn btn-primary',onclick:()=>{
-      if(!p){alert('Enter a price');return}
-      trip.priceChecks=trip.priceChecks||[];
-      trip.priceChecks.push({date:d,price:parseFloat(p),notes:n,source:'manual'});
-      trip.priceChecks.sort((a,b)=>a.date.localeCompare(b.date));
-      save(state);checkId=null;render();
-    }},'Save'),
-    h('button',{className:'btn btn-ghost',onclick:()=>{checkId=null;render()}},'Cancel')
-  ));
-  overlay.appendChild(modal);
-  return overlay;
-}
+cd.appendChild(h('div',{cn:'fr'},fi('Name','text','nm',{sz:'l',ph:'Maui Nov'}),fi('Pax','number','px',{sz:'s',ps:v=>parseInt(v)||1})));
+cd.appendChild(h('div',{cn:'fr'},fi('Origin','text','or',{ph:'CVG',mx:3,ps:v=>v.toUpperCase()}),fi('Dest','text','ds',{ph:'OGG',mx:3,ps:v=>v.toUpperCase()}),fi('Airline','select','af',{op:AL.map(a=>({v:a.c,l:a.l}))}),fi('Flights','text','fn',{ph:'DL 2291+847 / DL 1203+558'})));
+cd.appendChild(h('div',{cn:'fr'},fi('Type','select','tt',{op:[{v:'roundtrip',l:'Round trip'},{v:'oneway',l:'One way'}]}),fi('Cabin','select','cb',{op:CB.map(c=>({v:c.v,l:c.l}))}),fi('Stops','select','st',{op:ST.map(s=>({v:s.v,l:s.l}))})));
+cd.appendChild(h('div',{cn:'fr'},fi('Outbound','date','od'),fi('Return','date','rd'),fi('Booked ($)','number','bp',{ph:'498',ps:v=>v?parseFloat(v):''}),fi('Alert ($)','select','at',{op:[25,40,50,75,100,150,200,300].map(t=>({v:t,l:'≥$'+t})),ps:v=>parseInt(v)})));
+cd.appendChild(h('div',{cn:'fr'},fi('Gauge threshold','select','pt',{op:TH.map(t=>({v:t,l:t+'% above floor'})),ps:v=>parseInt(v)}),fi('Notes','text','nt',{sz:'l',ph:'Optional'})));
 
-function renderSettings(){
-  const wrap=h('div');
-  // Schedule
-  const sched=h('div',{className:'card'});
-  sched.appendChild(h('div',{style:{fontSize:'13px',fontWeight:700,color:'var(--white)',marginBottom:'10px'}},'Schedule & Frequency'));
-  sched.appendChild(h('label',null,'Check Days'));
-  const dp=h('div',{className:'day-picker',style:{marginBottom:'12px'}});
-  const s=state.settings.schedule||{days:['Wed','Sat'],hour:9,tz:'ET'};
-  DAYS.forEach(d=>{
-    dp.appendChild(h('button',{className:'day-btn'+(s.days.includes(d)?' active':''),onclick:()=>{
-      if(s.days.includes(d))s.days=s.days.filter(x=>x!==d);else s.days.push(d);
-      state.settings.schedule=s;save(state);render();
-    }},d));
-  });
-  sched.appendChild(dp);
-  sched.appendChild(h('div',{className:'form-row'},
-    (()=>{const g=h('div',{className:'form-group'});g.appendChild(h('label',null,'Time'));const sl=h('select',{onchange:e=>{s.hour=parseInt(e.target.value);state.settings.schedule=s;save(state);render()}});HOURS.forEach(hr=>{const o=h('option',{value:hr.v},hr.l);if(s.hour===hr.v)o.selected=true;sl.appendChild(o)});g.appendChild(sl);return g})(),
-    (()=>{const g=h('div',{className:'form-group'});g.appendChild(h('label',null,'Timezone'));const sl=h('select',{onchange:e=>{s.tz=e.target.value;state.settings.schedule=s;save(state);render()}});['ET','CT','MT','PT'].forEach(tz=>{const o=h('option',{value:tz},tz);if(s.tz===tz)o.selected=true;sl.appendChild(o)});g.appendChild(sl);return g})()
-  ));
-  // Impact calc
-  const active=state.trips.filter(t=>t.active&&daysOut(t.outboundDate)>=0).length;
-  const monthly=Math.ceil(active*s.days.length*4.3);
-  const withinFree=monthly<=FREE_LIMIT;
-  const tzOff={ET:4,CT:5,MT:6,PT:7};
-  const utcH=((s.hour||9)+(tzOff[s.tz]||4))%24;
-  const dayMap={Mon:1,Tue:2,Wed:3,Thu:4,Fri:5,Sat:6,Sun:0};
-  const cronDays=s.days.map(d=>dayMap[d]).sort().join(',');
-  const cronStr='0 '+utcH+' * * '+cronDays;
-  const impact=h('div',{className:'impact'});
-  impact.innerHTML='<b style="color:var(--text)">'+s.days.length+'×/week</b> × '+active+' trip'+(active!==1?'s':'')+' = <b style="color:var(--accent)">'+s.days.length*active+' API calls/week</b><br>~<b style="color:'+(withinFree?'var(--success)':'var(--danger)')+'">'+monthly+' calls/month</b>'+(withinFree?' — within free tier':' — exceeds free tier, ≈$'+(Math.max(0,monthly-FREE_LIMIT)*PAID_RATE).toFixed(2)+'/mo')+'<br><br>Cron: <code style="background:var(--card);padding:2px 6px;border-radius:4px;color:var(--dim)">'+cronStr+'</code><br><span style="font-size:11px;color:var(--muted)">Update this in .github/workflows/flight-monitor.yml line 24</span>';
-  sched.appendChild(impact);
-  wrap.appendChild(sched);
+const ow=h('div',{st:{background:'var(--al)',borderRadius:'6px',padding:'8px 10px',marginTop:'4px'}});
+ow.appendChild(h('div',{st:{display:'flex',alignItems:'center',gap:'6px',marginBottom:f.ow?'6px':'0'}},
+h('label',{st:{marginBottom:0,cursor:'pointer',display:'flex',alignItems:'center',gap:'5px'}},
+h('input',{type:'checkbox',checked:f.ow,onchange:e=>{f.ow=e.target.checked;cd.replaceWith(rForm(f))}}),
+'Compare two one-way tickets')));
+if(f.ow){ow.appendChild(h('div',{cn:'fr'},fi('Out airline','select','oa',{op:AL.map(a=>({v:a.c,l:a.l}))}),fi('Ret airline','select','ra',{op:AL.map(a=>({v:a.c,l:a.l}))})));
+ow.appendChild(h('div',{st:{fontSize:'9.5px',color:'var(--dm)'}},'Uses 2 extra API calls per check'))}
+cd.appendChild(ow);
 
-  // Import
-  const imp=h('div',{className:'card'});
-  imp.appendChild(h('div',{style:{fontSize:'13px',fontWeight:700,color:'var(--white)',marginBottom:'8px'}},'Import Price History'));
-  imp.appendChild(h('div',{style:{fontSize:'12px',color:'var(--dim)',marginBottom:'10px',lineHeight:'1.6'}},'Paste the JSON output from a GitHub Actions run to import automated price checks into the dashboard.'));
-  const ta=h('textarea',{placeholder:'Paste JSON here...',style:{marginBottom:'8px'}});
-  imp.appendChild(ta);
-  imp.appendChild(h('button',{className:'btn btn-primary',onclick:()=>{
-    try{
-      const data=JSON.parse(ta.value);
-      let count=0;
-      Object.entries(data).forEach(([tripId,tripData])=>{
-        const trip=state.trips.find(t=>t.id===tripId);
-        if(!trip||!tripData.checks)return;
-        const existing=new Set((trip.priceChecks||[]).map(c=>c.date));
-        tripData.checks.forEach(c=>{
-          const date=(c.timestamp||'').split('T')[0];
-          if(c.price&&date&&!existing.has(date)){
-            trip.priceChecks=trip.priceChecks||[];
-            trip.priceChecks.push({date,price:c.price,notes:c.price_level||'',source:'auto'});
-            count++;
-          }
-        });
-        trip.priceChecks.sort((a,b)=>a.date.localeCompare(b.date));
-      });
-      save(state);render();alert('Imported '+count+' price check(s).');
-    }catch(e){alert('Invalid JSON: '+e.message)}
-  }},'Import'));
-  wrap.appendChild(imp);
+const br=h('div',{cn:'br'});
+br.appendChild(h('button',{cn:'b bp',onclick:()=>{if(!f.or||!f.ds||!f.od){alert('Origin, dest, date required');return}if(nw)S.t.push(f);else{const i=S.t.findIndex(t=>t.id===f.id);if(i>=0)S.t[i]=f}sv(S);vw='dash';eid=null;R()}},nw?'Add':'Save'));
+br.appendChild(h('button',{cn:'b bg',onclick:()=>{vw='dash';eid=null;R()}},'Cancel'));
+if(!nw)br.appendChild(h('button',{cn:'b bd',st:{marginLeft:'auto'},onclick:()=>{if(confirm('Delete?')){S.t=S.t.filter(t=>t.id!==f.id);sv(S);vw='dash';eid=null;R()}}},'Delete'));
+cd.appendChild(br);return cd}
 
-  // Architecture
-  const arch=h('div',{className:'card'});
-  arch.appendChild(h('div',{style:{fontSize:'13px',fontWeight:700,color:'var(--white)',marginBottom:'6px'}},'System Architecture'));
-  const ad=h('div',{style:{fontSize:'11.5px',color:'var(--dim)',lineHeight:'1.9',fontFamily:'Menlo,monospace'}});
-  ad.innerHTML='GitHub Actions (free) → cron schedule<br><span style="padding-left:16px">↓ flight_monitor_v2.py</span><br><span style="padding-left:16px">↓ SerpApi (free, '+FREE_LIMIT+'/mo) → Google Flights</span><br><span style="padding-left:16px">↓ Discord webhook → push to iPhone</span><br><span style="padding-left:16px">↓ This dashboard → view history</span><br><br><span style="color:var(--muted)">Total: $0/month</span>';
-  arch.appendChild(ad);
-  wrap.appendChild(arch);
+function rChkMo(trip){if(!trip)return h('div');let dt=td(),rtp='',rsp='',rsd='',owop='',owoa='',owrp='',owra='';
+const ov=h('div',{cn:'mo',onclick:e=>{if(e.target===ov){cid=null;R()}}});const mc=h('div',{cn:'mc'});
+mc.appendChild(h('div',{st:{fontSize:'13px',fontWeight:700,color:'var(--wh)',marginBottom:'2px'}},'Log check'));
+mc.appendChild(h('div',{st:{fontSize:'10.5px',color:'var(--dm)',marginBottom:'8px'}},trip.or+' → '+trip.ds));
+function fi2(l,ph,cb){const g=h('div',{cn:'fg'});g.appendChild(h('label',null,l));const i=h('input',{type:ph==='date'?'date':'number',step:'.01',placeholder:ph,oninput:e=>cb(e.target.value)});if(l==='RT lowest')setTimeout(()=>i.focus(),50);g.appendChild(i);return g}
+mc.appendChild(h('div',{cn:'fr'},fi2('Date','date',v=>{dt=v}),fi2('RT lowest','612',v=>{rtp=v})));
+mc.appendChild(h('div',{cn:'fr'},fi2('RT shortest','689',v=>{rsp=v}),fi2('Short dur (min)','370',v=>{rsd=v})));
+if(trip.ow){mc.appendChild(h('div',{st:{fontSize:'10px',fontWeight:600,color:'var(--dm)',margin:'4px 0 3px',textTransform:'uppercase'}},'One-ways'));
+mc.appendChild(h('div',{cn:'fr'},fi2('Out $','289',v=>{owop=v}),(()=>{const g=h('div',{cn:'fg'});g.appendChild(h('label',null,'Out airline'));g.appendChild(h('input',{placeholder:'Delta',oninput:e=>{owoa=e.target.value}}));return g})()));
+mc.appendChild(h('div',{cn:'fr'},fi2('Ret $','278',v=>{owrp=v}),(()=>{const g=h('div',{cn:'fg'});g.appendChild(h('label',null,'Ret airline'));g.appendChild(h('input',{placeholder:'United',oninput:e=>{owra=e.target.value}}));return g})()))}
+mc.appendChild(h('div',{cn:'br'},h('button',{cn:'b bp',onclick:()=>{if(!rtp){alert('Enter RT price');return}
+const chk={dt,rtp:parseFloat(rtp),rsp:rsp?parseFloat(rsp):null,rsd:rsd?parseInt(rsd):null,src:'manual',tr:[]};
+if(owop&&owrp){chk.owop=parseFloat(owop);chk.owoa=owoa;chk.owrp=parseFloat(owrp);chk.owra=owra;chk.owt=chk.owop+chk.owrp}
+trip.pc=trip.pc||[];trip.pc.push(chk);trip.pc.sort((a,b)=>a.dt.localeCompare(b.dt));sv(S);cid=null;R()}},'Save'),
+h('button',{cn:'b bg',onclick:()=>{cid=null;R()}},'Cancel')));ov.appendChild(mc);return ov}
 
-  // Data management
-  const dm=h('div',{className:'card'});
-  dm.appendChild(h('div',{style:{fontSize:'13px',fontWeight:700,color:'var(--white)',marginBottom:'8px'}},'Data'));
-  dm.appendChild(h('div',{className:'btn-row'},
-    h('button',{className:'btn btn-ghost',onclick:()=>{
-      const blob=new Blob([JSON.stringify(state,null,2)],{type:'application/json'});
-      const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='flight-monitor-backup.json';a.click();
-    }},'Export Backup'),
-    h('button',{className:'btn btn-ghost',onclick:()=>{
-      const inp=document.createElement('input');inp.type='file';inp.accept='.json';
-      inp.onchange=e=>{const r=new FileReader();r.onload=()=>{try{state=JSON.parse(r.result);save(state);render();alert('Restored.')}catch(e){alert('Invalid file')}};r.readAsText(e.target.files[0])};inp.click();
-    }},'Restore from Backup'),
-    h('button',{className:'btn btn-danger',onclick:()=>{if(confirm('Clear ALL data? This cannot be undone.')){localStorage.removeItem(LS_KEY);state={trips:[],settings:{schedule:{days:['Wed','Sat'],hour:9,tz:'ET'},apiUsage:{}}};render()}}},'Reset All Data')
-  ));
-  wrap.appendChild(dm);
-  return wrap;
-}
+function rSet(){const w=h('div');const sc=S.s.sch||{...DS.sch};const cd=h('div',{cn:'c'});
+cd.appendChild(h('div',{st:{fontSize:'12px',fontWeight:700,color:'var(--wh)',marginBottom:'6px'}},'Schedule'));
+cd.appendChild(h('label',null,'Check days'));
+const dp=h('div',{cn:'dp',st:{marginBottom:'8px'}});
+DY.forEach(d=>{dp.appendChild(h('button',{cn:'db'+(sc.days.includes(d)?' on':''),onclick:()=>{if(sc.days.includes(d))sc.days=sc.days.filter(x=>x!==d);else sc.days.push(d);S.s.sch=sc;sv(S);R()}},d))});cd.appendChild(dp);
+cd.appendChild(h('div',{cn:'fr'},
+(()=>{const g=h('div',{cn:'fg'});g.appendChild(h('label',null,'Time'));const s=h('select',{onchange:e=>{sc.hr=parseInt(e.target.value);S.s.sch=sc;sv(S);R()}});HR.forEach(hr=>{const o=h('option',{value:hr.v},hr.l);if(sc.hr===hr.v)o.selected=true;s.appendChild(o)});g.appendChild(s);return g})(),
+(()=>{const g=h('div',{cn:'fg'});g.appendChild(h('label',null,'Timezone'));const s=h('select',{onchange:e=>{sc.tz=e.target.value;S.s.sch=sc;sv(S);R()}});['ET','CT','MT','PT'].forEach(tz=>{const o=h('option',{value:tz},tz);if(sc.tz===tz)o.selected=true;s.appendChild(o)});g.appendChild(s);return g})()));
+const at=S.t.filter(t=>t.ac&&dout(t.od)>=0);const cp=at.reduce((s,t)=>s+(t.ow?3:1),0);
+const mo=Math.ceil(cp*sc.days.length*4.3);const ok=mo<=FL;
+const tzO={ET:4,CT:5,MT:6,PT:7};const uh=((sc.hr||9)+(tzO[sc.tz]||4))%24;
+const dm2={Mon:1,Tue:2,Wed:3,Thu:4,Fri:5,Sat:6,Sun:0};const cds=sc.days.map(d=>dm2[d]).sort().join(',');
+const imp=h('div',{cn:'imp'});
+imp.innerHTML='<b style="color:var(--wh)">'+sc.days.length+'×/wk</b> × '+cp+' calls = <b style="color:var(--ac)">'+sc.days.length*cp+'/wk</b><br>~<b style="color:'+(ok?'var(--ok)':'var(--dg)')+'">'+mo+'/mo</b>'+(ok?' free':' $'+(Math.max(0,mo-FL)*PR).toFixed(2)+'/mo')+'<br><br>Cron: <code style="background:var(--cd);padding:1px 4px;border-radius:3px">0 '+uh+' * * '+cds+'</code><br><span style="font-size:9px;color:var(--mt)">Paste into .github/workflows/flight-monitor.yml</span>';
+cd.appendChild(imp);w.appendChild(cd);
 
-render();
+const im=h('div',{cn:'c'});im.appendChild(h('div',{st:{fontSize:'12px',fontWeight:700,color:'var(--wh)',marginBottom:'4px'}},'Import'));
+im.appendChild(h('div',{st:{fontSize:'10px',color:'var(--dm)',marginBottom:'6px'}},'Paste JSON from GitHub Actions run'));
+const ta=h('textarea',{placeholder:'{"cvg-lga-jun26":{"checks":[...]}}',st:{width:'100%',minHeight:'40px',padding:'6px',borderRadius:'5px',border:'1px solid var(--bd)',background:'var(--al)',color:'var(--tx)',fontSize:'10px',resize:'vertical'}});
+im.appendChild(ta);im.appendChild(h('div',{cn:'br'},h('button',{cn:'b bp',onclick:()=>{
+try{const d=JSON.parse(ta.value);let n=0;Object.entries(d).forEach(([tid,td2])=>{const tr=S.t.find(t=>t.id===tid);if(!tr||!td2.checks)return;
+const ex=new Set((tr.pc||[]).map(c=>c.dt));td2.checks.forEach(c=>{const dt2=(c.timestamp||'').split('T')[0];
+if(c.rt_lowest_price&&dt2&&!ex.has(dt2)){tr.pc=tr.pc||[];
+tr.pc.push({dt:dt2,rtp:c.rt_lowest_price,rsp:c.rt_shortest_price||null,rsd:c.rt_shortest_duration||null,owt:c.ow_combined_lowest||null,owop:c.ow_out_price||null,owoa:c.ow_out_airline||null,owrp:c.ow_ret_price||null,owra:c.ow_ret_airline||null,src:'auto',tr:c.typical_range||[]});n++}});
+tr.pc.sort((a,b)=>a.dt.localeCompare(b.dt))});sv(S);R();alert(n+' imported')}catch(e){alert('Error: '+e.message)}}},'Import')));w.appendChild(im);
+
+const dm=h('div',{cn:'c'});dm.appendChild(h('div',{st:{fontSize:'12px',fontWeight:700,color:'var(--wh)',marginBottom:'4px'}},'Data'));
+dm.appendChild(h('div',{cn:'br',st:{marginTop:'2px'}},
+h('button',{cn:'b bg',onclick:()=>{const b=new Blob([JSON.stringify(S,null,2)],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(b);a.download='fm-backup.json';a.click()}},'Export'),
+h('button',{cn:'b bg',onclick:()=>{const i=document.createElement('input');i.type='file';i.accept='.json';i.onchange=e=>{const r=new FileReader();r.onload=()=>{try{S=JSON.parse(r.result);sv(S);R();alert('OK')}catch(e){alert('Bad')}};r.readAsText(e.target.files[0])};i.click()}},'Restore'),
+h('button',{cn:'b bd',onclick:()=>{if(confirm('Clear ALL?')){localStorage.removeItem(LS);S={t:[],s:{...DS}};R()}}},'Reset')));w.appendChild(dm);return w}
+
+R();
 </script>
 </body>
 </html>
