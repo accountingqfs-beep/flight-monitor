@@ -1,20 +1,8 @@
-# ─────────────────────────────────────────────────────────────────────────────
-# Flight Price Monitor — GitHub Actions Workflow
-# ─────────────────────────────────────────────────────────────────────────────
-# Runs twice weekly (Wed + Sat at 9am ET).
-# Checks all active trips and sends Discord notifications.
+# Flight Price Monitor v3 — GitHub Actions Workflow
+# Dual tracking (lowest + shortest), two one-way comparison, Discord alerts
 #
-# REQUIRED SECRETS (Settings → Secrets → Actions):
-#   SERPAPI_KEY       — Your SerpApi API key (free at serpapi.com)
-#   DISCORD_WEBHOOK   — Your Discord webhook URL
-#
-# OPTIONAL SECRETS:
-#   EMAIL_ENABLED     — "true" to enable email backup
-#   EMAIL_SENDER      — Gmail address
-#   EMAIL_PASSWORD    — Gmail App Password
-#   EMAIL_RECIPIENTS  — Comma-separated email addresses
-#   SMS_GATEWAY       — Carrier SMS gateway (e.g., 5135551234@txt.att.net)
-# ─────────────────────────────────────────────────────────────────────────────
+# REQUIRED SECRETS: SERPAPI_KEY, DISCORD_WEBHOOK
+# OPTIONAL: EMAIL_ENABLED, EMAIL_SENDER, EMAIL_PASSWORD, EMAIL_RECIPIENTS, SMS_GATEWAY
 
 name: Flight Price Monitor
 
@@ -22,8 +10,6 @@ on:
   schedule:
     # Twice weekly: Wednesday + Saturday at 9:00 AM Eastern (1:00 PM UTC)
     - cron: '0 13 * * 3,6'
-
-  # Manual trigger — click "Run workflow" in GitHub Actions tab
   workflow_dispatch:
     inputs:
       always_notify:
@@ -34,7 +20,7 @@ on:
 jobs:
   check-prices:
     runs-on: ubuntu-latest
-    timeout-minutes: 5
+    timeout-minutes: 10
 
     steps:
       - name: Checkout
@@ -48,16 +34,13 @@ jobs:
       - name: Install requests
         run: pip install requests -q
 
-      # Restore price history from previous runs
-      - name: Restore price history
+      - name: Restore history
         uses: actions/cache/restore@v4
         with:
           path: ~/.flight_monitor
-          key: flight-history-${{ github.run_number }}
-          restore-keys: |
-            flight-history-
+          key: flight-v3-${{ github.run_number }}
+          restore-keys: flight-v3-
 
-      # Run the monitor
       - name: Check all trips
         env:
           SERPAPI_KEY: ${{ secrets.SERPAPI_KEY }}
@@ -68,26 +51,23 @@ jobs:
           EMAIL_RECIPIENTS: ${{ secrets.EMAIL_RECIPIENTS || '' }}
           SMS_GATEWAY: ${{ secrets.SMS_GATEWAY || '' }}
           ALWAYS_NOTIFY: ${{ github.event.inputs.always_notify || 'true' }}
-        run: python flight_monitor_v2.py check
+        run: python flight_monitor_v3.py check
 
-      # Show status summary
       - name: Print status
-        run: python flight_monitor_v2.py status
+        run: python flight_monitor_v3.py status
         continue-on-error: true
 
-      # Save price history for next run
-      - name: Save price history
+      - name: Save history
         uses: actions/cache/save@v4
         if: always()
         with:
           path: ~/.flight_monitor
-          key: flight-history-${{ github.run_number }}
+          key: flight-v3-${{ github.run_number }}
 
-      # Also save as downloadable artifact
-      - name: Upload history artifact
+      - name: Upload artifacts
         uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: price-history-${{ github.run_number }}
+          name: flight-data-${{ github.run_number }}
           path: ~/.flight_monitor/
           retention-days: 90
