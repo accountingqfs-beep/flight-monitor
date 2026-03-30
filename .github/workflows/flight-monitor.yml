@@ -22,6 +22,6 @@ jobs:
         env:
           SERPAPI_KEY: ${{ secrets.SERPAPI_KEY }}
           DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_TOKEN: ${{ secrets.GH_PAT }}
           ALWAYS_NOTIFY: ${{ github.event.inputs.always_notify || 'true' }}
         run: python flight_monitor_v3.py check
