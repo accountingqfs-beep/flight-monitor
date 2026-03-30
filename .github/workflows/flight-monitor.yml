@@ -1,14 +1,6 @@
-# Flight Price Monitor v3 — GitHub Actions Workflow
-# Dual tracking (lowest + shortest), two one-way comparison, Discord alerts
-#
-# REQUIRED SECRETS: SERPAPI_KEY, DISCORD_WEBHOOK
-# OPTIONAL: EMAIL_ENABLED, EMAIL_SENDER, EMAIL_PASSWORD, EMAIL_RECIPIENTS, SMS_GATEWAY
-
 name: Flight Price Monitor
-
 on:
   schedule:
-    # Twice weekly: Wednesday + Saturday at 9:00 AM Eastern (1:00 PM UTC)
     - cron: '0 13 * * 2,5'
   workflow_dispatch:
     inputs:
@@ -16,58 +8,20 @@ on:
         description: 'Send Discord alert even if no price drop'
         required: false
         default: 'true'
-
 jobs:
   check-prices:
     runs-on: ubuntu-latest
     timeout-minutes: 10
-
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Set up Python
-        uses: actions/setup-python@v5
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
-
-      - name: Install requests
-        run: pip install requests -q
-
-      - name: Restore history
-        uses: actions/cache/restore@v4
-        with:
-          path: ~/.flight_monitor
-          key: flight-v3-${{ github.run_number }}
-          restore-keys: flight-v3-
-
+      - run: pip install requests -q
       - name: Check all trips
         env:
           SERPAPI_KEY: ${{ secrets.SERPAPI_KEY }}
           DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
-          EMAIL_ENABLED: ${{ secrets.EMAIL_ENABLED || 'false' }}
-          EMAIL_SENDER: ${{ secrets.EMAIL_SENDER || '' }}
-          EMAIL_PASSWORD: ${{ secrets.EMAIL_PASSWORD || '' }}
-          EMAIL_RECIPIENTS: ${{ secrets.EMAIL_RECIPIENTS || '' }}
-          SMS_GATEWAY: ${{ secrets.SMS_GATEWAY || '' }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           ALWAYS_NOTIFY: ${{ github.event.inputs.always_notify || 'true' }}
         run: python flight_monitor_v3.py check
-
-      - name: Print status
-        run: python flight_monitor_v3.py status
-        continue-on-error: true
-
-      - name: Save history
-        uses: actions/cache/save@v4
-        if: always()
-        with:
-          path: ~/.flight_monitor
-          key: flight-v3-${{ github.run_number }}
-
-      - name: Upload artifacts
-        uses: actions/upload-artifact@v4
-        if: always()
-        with:
-          name: flight-data-${{ github.run_number }}
-          path: ~/.flight_monitor/
-          retention-days: 90
