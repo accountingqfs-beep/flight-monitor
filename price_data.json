@@ -1,0 +1,62 @@
+{
+  "j2cl8gt": [
+    {
+      "dt": "2026-03-30",
+      "ts": "2026-03-30T19:34:22.197022Z",
+      "rtp": null,
+      "rsp": null,
+      "rsd": null,
+      "owt": null,
+      "owop": null,
+      "owoa": null,
+      "owrp": null,
+      "owra": null,
+      "tr": [],
+      "pl": "",
+      "gr": "F",
+      "src": "auto"
+    }
+  ],
+  "o4xal99": [
+    {
+      "dt": "2026-03-30",
+      "ts": "2026-03-30T19:34:23.154366Z",
+      "rtp": 678,
+      "rsp": 678,
+      "rsd": 119,
+      "owt": null,
+      "owop": null,
+      "owoa": null,
+      "owrp": null,
+      "owra": null,
+      "tr": [
+        485,
+        910
+      ],
+      "pl": "typical",
+      "gr": "A",
+      "src": "auto"
+    }
+  ],
+  "s6j1q0l": [
+    {
+      "dt": "2026-03-30",
+      "ts": "2026-03-30T19:34:23.410429Z",
+      "rtp": 4168,
+      "rsp": 4168,
+      "rsd": 757,
+      "owt": 4086,
+      "owop": 2002,
+      "owoa": "American",
+      "owrp": 2084,
+      "owra": "Delta",
+      "tr": [
+        1100,
+        2050
+      ],
+      "pl": "high",
+      "gr": "A",
+      "src": "auto"
+    }
+  ]
+}
