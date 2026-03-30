@@ -144,7 +144,12 @@ async function triggerRun(){
     const r=await fetch('https://api.github.com/repos/'+REPO+'/actions/workflows/'+WF+'/dispatches',{
       method:'POST',headers:{'Authorization':'Bearer '+pat,'Accept':'application/vnd.github.v3+json','Content-Type':'application/json'},
       body:JSON.stringify({ref:'main',inputs:{always_notify:'true'}})});
-    if(r.status===204){runStatus='sent';R();setTimeout(()=>{runStatus='';R()},5000)}
+    if(r.status===204){
+      runStatus='sent';R();
+      setTimeout(()=>{runStatus='syncing';R()},5000);
+      setTimeout(async()=>{runStatus='syncing';R();await syncPrices();runStatus='';R()},90000);
+      setTimeout(async()=>{await syncPrices();runStatus='';R()},120000);
+    }
     else if(r.status===401){runStatus='error';R();alert('Token expired or invalid. Update it in Settings.');setTimeout(()=>{runStatus='';R()},3000)}
     else{runStatus='error';R();alert('Error '+r.status);setTimeout(()=>{runStatus='';R()},3000)}
   }catch(e){runStatus='error';R();alert('Error: '+e.message);setTimeout(()=>{runStatus='';R()},3000)}
@@ -155,12 +160,12 @@ if(vw==='dash')m.appendChild(rDash());else if(vw==='add')m.appendChild(rForm(nul
 a.appendChild(m);a.appendChild(h('div',{cn:'ft'},'Auto-syncs from GitHub repo'));if(cid)a.appendChild(rChkMo(S.t.find(t=>t.id===cid)));if(showInfo)a.appendChild(rInfo())}
 function rHd(){const at=S.t.filter(t=>t.ac&&!t.archived&&dout(t.od)>=0),u=S.s.api?.[mk()]||0;
 let lastTs=null;S.t.forEach(t=>{(t.pc||[]).forEach(c=>{const ts=c.ts||c.dt;if(ts&&(!lastTs||ts>lastTs))lastTs=ts})});
-const lastStr=lastTs?'Last check: '+new Date(lastTs).toLocaleDateString('en-US',{month:'short',day:'numeric'})+' '+new Date(lastTs).toLocaleTimeString('en-US',{hour:'numeric',minute:'2-digit'}):'No checks yet';
+const lastStr=lastTs?'Last check: '+new Date(lastTs).toLocaleDateString('en-US',{timeZone:'America/New_York',month:'short',day:'numeric'})+' '+new Date(lastTs).toLocaleTimeString('en-US',{timeZone:'America/New_York',hour:'numeric',minute:'2-digit'})+' ET':'No checks yet';
 const nav=h('div',{cn:'nv'});
 [['dash','Trips'],['add','+ Add'],['set','Settings']].forEach(([v,l])=>nav.appendChild(h('button',{cn:vw===v||(vw==='edit'&&v==='dash')?'on':'',onclick:()=>{vw=v;eid=null;R()}},l)));
 const ib=h('button',{cn:'b',st:{background:'var(--al)',color:'var(--dm)',border:'1px solid var(--bd)',width:'32px',height:'32px',borderRadius:'50%',padding:0,fontSize:'15px',fontWeight:700,display:'flex',alignItems:'center',justifyContent:'center',cursor:'pointer'},onclick:()=>{showInfo=!showInfo;R()}},'i');
 nav.appendChild(ib);
-const rb=h('button',{cn:'b',st:{background:'#10b981',color:'#fff',fontWeight:700,padding:'6px 14px',borderRadius:'6px',border:'none'},onclick:()=>{if(runStatus!=='running')triggerRun()}},runStatus==='running'?'Running...':runStatus==='sent'?'Sent!':'Run Now');
+const rb=h('button',{cn:'b',st:{background:'#10b981',color:'#fff',fontWeight:700,padding:'6px 14px',borderRadius:'6px',border:'none'},onclick:()=>{if(runStatus!=='running'&&runStatus!=='syncing')triggerRun()}},runStatus==='running'?'Running...':runStatus==='sent'?'Sent!':runStatus==='syncing'?'Syncing...':'Run Now');
 nav.appendChild(rb);
 return h('div',{cn:'hd'},h('div',{cn:'hd-l'},h('div',{cn:'logo'},'*'),h('div',null,h('h1',null,'Flight Monitor'),h('div',{cn:'sub'},at.length+' active | '+u+'/'+FL+' API | '+lastStr))),nav)}
 
