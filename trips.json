@@ -46,29 +46,5 @@
     "ra": "",
     "archived": false,
     "nt": ""
-  },
-  {
-    "id": "j2cl8gt",
-    "nm": "NYC June 2026 - M+M",
-    "or": "CVG",
-    "ds": "LGA",
-    "od": "2026-06-11",
-    "rd": "2026-06-14",
-    "px": 1,
-    "af": "DL",
-    "fn": "",
-    "st": "1stop",
-    "tt": "roundtrip",
-    "cb": "premium",
-    "bp": "",
-    "at": 100,
-    "pt": 40,
-    "rb": 50,
-    "ac": true,
-    "ow": false,
-    "oa": "DL",
-    "ra": "DL",
-    "archived": true,
-    "nt": "CRJ-900 has no true Premium Econ â may need Economy"
   }
 ]
