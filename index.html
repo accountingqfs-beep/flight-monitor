@@ -65,7 +65,7 @@ function stn(c){return(ST.find(x=>x.v===c)||{}).l||''}
 function mk(){const d=new Date();return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')}
 function dlm(){const d=new Date();return new Date(d.getFullYear(),d.getMonth()+1,0).getDate()-d.getDate()}
 function h(t,p,...c){const e=document.createElement(t);if(p)Object.entries(p).forEach(([k,v])=>{if(k.startsWith('on'))e[k]=v;else if(k==='cn')e.className=v;else if(k==='st'&&typeof v==='object')Object.assign(e.style,v);else if(k==='checked')e.checked=v;else if(k==='selected')e.selected=v;else e.setAttribute(k,v)});c.flat(9).forEach(x=>{if(x!=null)e.appendChild(typeof x==='string'?document.createTextNode(x):x)});return e}
-let S=ld(),vw='dash',eid=null,cid=null,runStatus='',syncStatus='';
+let S=ld(),vw='dash',eid=null,cid=null,runStatus='',syncStatus='',showInfo=false;
 
 // ═══ AUTO-SYNC: fetch price_data.json from repo ═══
 async function syncPrices(){
@@ -138,24 +138,26 @@ async function commitTrips(){
 }
 
 async function triggerRun(){
-  const pat=S.s.pat;if(!pat){alert('Set GitHub token in Settings first');return}
+  const pat=S.s.pat;if(!pat){alert('Run Now requires admin access. Price checks run automatically on the scheduled days — no action needed.');return}
   runStatus='running';R();
   try{
     const r=await fetch('https://api.github.com/repos/'+REPO+'/actions/workflows/'+WF+'/dispatches',{
       method:'POST',headers:{'Authorization':'Bearer '+pat,'Accept':'application/vnd.github.v3+json','Content-Type':'application/json'},
       body:JSON.stringify({ref:'main',inputs:{always_notify:'true'}})});
     if(r.status===204){runStatus='sent';R();setTimeout(()=>{runStatus='';R()},5000)}
+    else if(r.status===401){runStatus='error';R();alert('Token expired or invalid. Update it in Settings.');setTimeout(()=>{runStatus='';R()},3000)}
     else{runStatus='error';R();alert('Error '+r.status);setTimeout(()=>{runStatus='';R()},3000)}
   }catch(e){runStatus='error';R();alert('Error: '+e.message);setTimeout(()=>{runStatus='';R()},3000)}
 }
 
 function R(){const a=document.getElementById('app');a.innerHTML='';a.appendChild(rHd());const m=h('div',{cn:'mn'});
 if(vw==='dash')m.appendChild(rDash());else if(vw==='add')m.appendChild(rForm(null));else if(vw==='edit'&&eid)m.appendChild(rForm(S.t.find(t=>t.id===eid)));else if(vw==='set')m.appendChild(rSet());
-a.appendChild(m);a.appendChild(h('div',{cn:'ft'},'Auto-syncs from GitHub repo'));if(cid)a.appendChild(rChkMo(S.t.find(t=>t.id===cid)))}
-
+a.appendChild(m);a.appendChild(h('div',{cn:'ft'},'Auto-syncs from GitHub repo'));if(cid)a.appendChild(rChkMo(S.t.find(t=>t.id===cid)));if(showInfo)a.appendChild(rInfo())}
 function rHd(){const at=S.t.filter(t=>t.ac&&!t.archived&&dout(t.od)>=0),u=S.s.api?.[mk()]||0;
 const nav=h('div',{cn:'nv'});
 [['dash','Trips'],['add','+ Add'],['set','Settings']].forEach(([v,l])=>nav.appendChild(h('button',{cn:vw===v||(vw==='edit'&&v==='dash')?'on':'',onclick:()=>{vw=v;eid=null;R()}},l)));
+const ib=h('button',{cn:'b',st:{background:'var(--al)',color:'var(--dm)',border:'1px solid var(--bd)',width:'32px',height:'32px',borderRadius:'50%',padding:0,fontSize:'15px',fontWeight:700,display:'flex',alignItems:'center',justifyContent:'center',cursor:'pointer'},onclick:()=>{showInfo=!showInfo;R()}},'i');
+nav.appendChild(ib);
 const rb=h('button',{cn:'b',st:{background:'#10b981',color:'#fff',fontWeight:700,padding:'6px 14px',borderRadius:'6px',border:'none'},onclick:()=>{if(runStatus!=='running')triggerRun()}},runStatus==='running'?'Running...':runStatus==='sent'?'Sent!':'Run Now');
 nav.appendChild(rb);
 return h('div',{cn:'hd'},h('div',{cn:'hd-l'},h('div',{cn:'logo'},'*'),h('div',null,h('h1',null,'Flight Monitor'),h('div',{cn:'sub'},at.length+' active | '+u+'/'+FL+' API'))),nav)}
@@ -302,6 +304,33 @@ const chk={dt,rtp:parseFloat(rtp),rsp:rsp?parseFloat(rsp):null,rsd:rsd?parseInt(
 if(owop&&owrp){chk.owop=parseFloat(owop);chk.owoa=owoa;chk.owrp=parseFloat(owrp);chk.owra=owra;chk.owt=chk.owop+chk.owrp}
 trip.pc=trip.pc||[];trip.pc.push(chk);trip.pc.sort((a,b)=>a.dt.localeCompare(b.dt));sv(S);cid=null;R()}},'Save'),
 h('button',{cn:'b bg2',onclick:()=>{cid=null;R()}},'Cancel')));ov.appendChild(mc);return ov}
+
+function rInfo(){
+const ov=h('div',{cn:'mo',onclick:e=>{if(e.target===ov){showInfo=false;R()}}});
+const mc=h('div',{st:{background:'var(--cd)',border:'1px solid var(--bd)',borderRadius:'12px',padding:'20px',maxWidth:'560px',width:'100%',maxHeight:'85vh',overflowY:'auto'}});
+const ti=h('div',{st:{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:'14px'}});
+ti.appendChild(h('div',{st:{fontSize:'18px',fontWeight:700,color:'var(--wh)'}},'How to Use Flight Monitor'));
+ti.appendChild(h('button',{cn:'b bg2',st:{padding:'4px 10px'},onclick:()=>{showInfo=false;R()}},'✕'));
+mc.appendChild(ti);
+const ss=[];
+ss.push(['Getting Started','This dashboard automatically tracks flight prices for your upcoming trips. Prices are checked on a schedule via GitHub Actions and results are pushed to your phone via Discord notifications. Everything syncs from the GitHub repo, so the dashboard works on any device.']);
+ss.push(['Adding a Trip','Tap <b>+ Add</b> in the nav bar. Fill in the origin and destination airport codes (e.g. CVG, LGA), travel dates, number of passengers, preferred airline, cabin class, and stop preference. Tap <b>Add</b> to save. The trip will appear on your dashboard and start being tracked on the next scheduled run.']);
+ss.push(['One-Way Comparison','When editing a trip, check <b>Compare two one-way tickets</b> at the bottom of the form. This searches outbound and return separately — sometimes two one-ways are cheaper than a round trip. Uses 2 extra API calls per check.']);
+ss.push(['Reading the Price Gauge','Each trip card has a horizontal gauge showing where the current price sits relative to the tracked range and Google\'s projected range. The <b>▼ top arrow</b> is the current price — green means it\'s below target, red means above. The <b>▲ bottom arrow</b> is either your target price (pre-booking) or your booked price (post-booking).']);
+ss.push(['Metric Cards','<b>RT Low</b> = cheapest round trip found. <b>RT Short</b> = cheapest among the shortest-duration flights. <b>OW Combo</b> = two one-ways combined (if enabled). <b>Booked</b> = your locked-in price. <b>vs Book</b> = savings vs. booked price. <b>Trend</b> = price direction from last two checks.']);
+ss.push(['Booking a Trip','Once you buy tickets, tap <b>Edit</b> and enter the price in the <b>Booked ($)</b> field. The gauge switches to post-booking mode: it tracks whether prices drop below your booked price by more than the <b>Rebook $</b> threshold. If they do, you\'ll get a green "Rebook!" alert on the card and in Discord.']);
+ss.push(['Run Now Button','The green <b>Run Now</b> button triggers an immediate price check via GitHub Actions. Requires a GitHub Personal Access Token (PAT) — set it in <b>Settings → GitHub Token</b>. The PAT needs <b>Actions: Read &amp; Write</b> and <b>Contents: Read &amp; Write</b> permissions on the flight-monitor repo.']);
+ss.push(['Automated Schedule','Prices are checked automatically on the days and time configured in <b>Settings → Schedule</b>. Default is Tuesday and Friday at 9 AM ET. Results are committed to the repo and synced to the dashboard on next load. Discord notifications are sent to your phone after each check.']);
+ss.push(['API Budget','The dashboard uses SerpApi\'s free tier (250 searches/month). The <b>API</b> card at the top shows usage, remaining calls, and projected monthly total. Each trip uses 1 call per check; trips with one-way comparison use 3.']);
+ss.push(['Managing Trips','<b>Edit</b> = modify trip settings. <b>+ Chk</b> = manually log a price check. <b>Archive</b> = hide a trip (preserves history; can be restored from the Archived section). <b>Delete forever</b> = permanent removal (available only from Archived).']);
+ss.push(['Data &amp; Backup','In <b>Settings → Data</b>: <b>Sync from GitHub</b> pulls latest price data. <b>Export</b> downloads a JSON backup. <b>Restore</b> imports a backup file. <b>Reset</b> clears all local data. Trip definitions are stored in the GitHub repo (trips.json), so they persist across devices.']);
+ss.forEach(([title,body])=>{
+const s=h('div',{st:{marginBottom:'12px'}});
+s.appendChild(h('div',{st:{fontSize:'14px',fontWeight:700,color:'var(--ac)',marginBottom:'3px'}},title));
+const p=h('div',{st:{fontSize:'13px',color:'var(--dm)',lineHeight:'1.6'}});
+p.innerHTML=body;s.appendChild(p);mc.appendChild(s);
+});
+ov.appendChild(mc);return ov}
 
 function rSet(){const w=h('div');const sc=S.s.sch||{...DS.sch};
 const pat=h('div',{cn:'c'});pat.appendChild(h('div',{st:{fontSize:'14px',fontWeight:700,color:'var(--wh)',marginBottom:'6px'}},'GitHub Token'));
