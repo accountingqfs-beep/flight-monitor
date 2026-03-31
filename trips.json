@@ -21,7 +21,7 @@
     "oa": "DL",
     "ra": "DL",
     "archived": true,
-    "nt": "CRJ-900 has no true Premium Econ — may need Economy"
+    "nt": "CRJ-900 has no true Premium Econ â may need Economy"
   },
   {
     "id": "o4xal99",
@@ -62,7 +62,7 @@
     "cb": "economy",
     "bp": "",
     "at": 100,
-    "pt": 40,
+    "pt": 100,
     "rb": 50,
     "ac": true,
     "ow": true,
