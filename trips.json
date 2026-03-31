@@ -45,7 +45,9 @@
     "oa": "DL",
     "ra": "DL",
     "archived": false,
-    "nt": "Booked the Economy (Main Classic) fare.  Basic fare was $379"
+    "nt": "Booked the Economy (Main Classic) fare.  Basic fare was $379",
+    "mp": 379,
+    "bd": "2026-03-27"
   },
   {
     "id": "s6j1q0l",
