@@ -21,9 +21,10 @@
     "oa": "DL",
     "ra": "DL",
     "archived": false,
-    "nt": "Booked the Economy (Main Classic) fare.  Basic fare was $379",
+    "nt": "Delta Main Basic = Economy",
     "mp": 379,
-    "bd": "2026-03-27"
+    "bd": "2026-03-27",
+    "ft": "Delta Main Classic"
   },
   {
     "id": "s6j1q0l",
