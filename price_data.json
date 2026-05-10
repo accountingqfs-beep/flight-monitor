@@ -359,6 +359,25 @@
       "pl": "typical",
       "gr": "A",
       "src": "auto"
+    },
+    {
+      "dt": "2026-05-10",
+      "ts": "2026-05-10T18:54:36.869697Z",
+      "rtp": 339,
+      "rsp": 339,
+      "rsd": 119,
+      "owt": null,
+      "owop": null,
+      "owoa": null,
+      "owrp": null,
+      "owra": null,
+      "tr": [
+        290,
+        465
+      ],
+      "pl": "typical",
+      "gr": "A",
+      "src": "auto"
     }
   ],
   "s6j1q0l": [
@@ -691,10 +710,29 @@
       "pl": "high",
       "gr": "A",
       "src": "auto"
+    },
+    {
+      "dt": "2026-05-10",
+      "ts": "2026-05-10T18:54:38.680256Z",
+      "rtp": 1970,
+      "rsp": 2289,
+      "rsd": 739,
+      "owt": 1976,
+      "owop": 776,
+      "owoa": "United",
+      "owrp": 1200,
+      "owra": "United",
+      "tr": [
+        600,
+        1350
+      ],
+      "pl": "high",
+      "gr": "A",
+      "src": "auto"
     }
   ],
   "_api_usage": {
     "2026-04": 77,
-    "2026-05": 14
+    "2026-05": 21
   }
 }
