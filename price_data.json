@@ -435,6 +435,25 @@
       "pl": "typical",
       "gr": "A",
       "src": "auto"
+    },
+    {
+      "dt": "2026-05-22",
+      "ts": "2026-05-22T15:47:06.061434Z",
+      "rtp": 489,
+      "rsp": 489,
+      "rsd": 120,
+      "owt": null,
+      "owop": null,
+      "owoa": null,
+      "owrp": null,
+      "owra": null,
+      "tr": [
+        335,
+        490
+      ],
+      "pl": "typical",
+      "gr": "A",
+      "src": "auto"
     }
   ],
   "s6j1q0l": [
@@ -843,10 +862,29 @@
       "pl": "high",
       "gr": "A",
       "src": "auto"
+    },
+    {
+      "dt": "2026-05-22",
+      "ts": "2026-05-22T15:47:07.087347Z",
+      "rtp": 2251,
+      "rsp": 2289,
+      "rsd": 739,
+      "owt": 2222,
+      "owop": 1056,
+      "owoa": "United",
+      "owrp": 1166,
+      "owra": "United",
+      "tr": [
+        600,
+        1350
+      ],
+      "pl": "high",
+      "gr": "A",
+      "src": "auto"
     }
   ],
   "_api_usage": {
     "2026-04": 77,
-    "2026-05": 42
+    "2026-05": 49
   }
 }
